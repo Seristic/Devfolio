@@ -19,7 +19,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "https://Seristic.github.io",
+  "homepage": "https://Seristic.github.io/Devfolio",
   "eslintConfig": {
     "extends": [
       "react-app",
