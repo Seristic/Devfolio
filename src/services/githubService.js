@@ -58,12 +58,11 @@ export class GitHubService {
     return await this.makeRequest(`/repos/${owner}/${repoName}/languages`);
   }
 
-  // Get aggregated language statistics across all repositories
+  // Get aggregated language statistics across all repositories (OPTIMIZED)
   async getAllLanguageStats(includePrivate = false) {
     try {
       const repos = await this.getRepositories(100, includePrivate);
       const languageStats = {};
-      let totalBytes = 0;
 
       console.log(
         `Analyzing ${repos.length} repositories${
@@ -71,10 +70,15 @@ export class GitHubService {
         }...`
       );
 
-      // Fetch language data for each repository
-      for (const repo of repos) {
-        if (!repo.fork) {
-          // Skip forked repositories
+      // Process repositories in batches to avoid rate limiting
+      const batchSize = 5; // Reduced batch size for better rate limiting
+      const activeRepos = repos.filter(repo => !repo.fork && repo.size > 0); // Skip forks and empty repos
+      
+      for (let i = 0; i < activeRepos.length; i += batchSize) {
+        const batch = activeRepos.slice(i, i + batchSize);
+        
+        // Process batch sequentially to avoid rate limits
+        for (const repo of batch) {
           try {
             const languages = await this.getRepositoryLanguages(
               repo.name,
@@ -84,26 +88,66 @@ export class GitHubService {
             // Aggregate language bytes
             for (const [language, bytes] of Object.entries(languages)) {
               languageStats[language] = (languageStats[language] || 0) + bytes;
-              totalBytes += bytes;
             }
+            
+            // Small delay between requests
+            await new Promise(resolve => setTimeout(resolve, 200));
           } catch (error) {
             console.warn(`Failed to fetch languages for ${repo.name}:`, error);
           }
         }
+        
+        // Progress indicator
+        console.log(`Processed ${Math.min(i + batchSize, activeRepos.length)}/${activeRepos.length} repositories...`);
       }
+
+      // Calculate total bytes
+      const totalBytes = Object.values(languageStats).reduce((sum, bytes) => sum + bytes, 0);
 
       // Convert to percentages and sort by usage
       const languagePercentages = Object.entries(languageStats)
         .map(([language, bytes]) => ({
           name: language,
           bytes: bytes,
-          percentage: Math.round((bytes / totalBytes) * 100),
+          percentage: totalBytes > 0 ? Math.round((bytes / totalBytes) * 100) : 0,
         }))
         .sort((a, b) => b.bytes - a.bytes);
 
+      console.log(`Language analysis complete. Found ${languagePercentages.length} languages.`);
       return languagePercentages;
     } catch (error) {
       console.error("Failed to fetch language stats:", error);
+      return [];
+    }
+  }
+
+  // Fast method to get basic language stats from repository data only
+  async getBasicLanguageStats(includePrivate = false) {
+    try {
+      const repos = await this.getRepositories(100, includePrivate);
+      const languageCounts = {};
+      
+      // Count repositories by primary language
+      repos.forEach(repo => {
+        if (!repo.fork && repo.language) {
+          languageCounts[repo.language] = (languageCounts[repo.language] || 0) + 1;
+        }
+      });
+
+      const totalRepos = Object.values(languageCounts).reduce((sum, count) => sum + count, 0);
+      
+      // Convert to percentages and sort
+      const languagePercentages = Object.entries(languageCounts)
+        .map(([language, count]) => ({
+          name: language,
+          repos: count,
+          percentage: Math.round((count / totalRepos) * 100),
+        }))
+        .sort((a, b) => b.repos - a.repos);
+
+      return languagePercentages;
+    } catch (error) {
+      console.error("Failed to fetch basic language stats:", error);
       return [];
     }
   }

@@ -21,6 +21,7 @@ const Skills = () => {
       enableCache: CONFIG.cache.enabled,
       cacheExpiry: CONFIG.cache.expiryHours * 60 * 60 * 1000,
       includePrivate: CONFIG.github.includePrivateRepos,
+      useDetailedStats: CONFIG.skills.useDetailedStats,
     }
   );
 

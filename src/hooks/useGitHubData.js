@@ -17,6 +17,7 @@ export const useGitHubData = (username, options = {}) => {
     enableCache = true, // Enable localStorage caching
     cacheExpiry = 3600000, // Cache expiry in milliseconds (1 hour)
     includePrivate = false, // Include private repositories (requires token with repo scope)
+    useDetailedStats = false, // Use detailed language stats (slower but more accurate)
   } = options;
 
   useEffect(() => {
@@ -50,7 +51,9 @@ export const useGitHubData = (username, options = {}) => {
 
         // Fetch language stats and profile stats in parallel
         const [languageStats, profileStats] = await Promise.all([
-          github.getAllLanguageStats(includePrivate),
+          useDetailedStats 
+            ? github.getAllLanguageStats(includePrivate)
+            : github.getBasicLanguageStats(includePrivate),
           github.getProfileStats(includePrivate),
         ]);
 
@@ -109,6 +112,7 @@ export const useGitHubData = (username, options = {}) => {
     enableCache,
     cacheExpiry,
     includePrivate,
+    useDetailedStats,
   ]);
 
   return data;
