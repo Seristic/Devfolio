@@ -5,7 +5,7 @@ export const CONFIG = {
   // GitHub Integration
   github: {
     username: "Seristic",
-    token: "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",
+    token: process.env.REACT_APP_GITHUB_TOKEN || "", // Use environment variable for security
     enableIntegration: true,
     includePrivateRepos: true, // Set to true to include private repositories (requires token with 'repo' scope)
   },
