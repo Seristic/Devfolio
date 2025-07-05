@@ -188,7 +188,7 @@ const Projects = () => {
         {/* View More Button */}
         <div className="text-center mt-12">
           <button
-            onClick={() => window.open('https://github.com/Seristic', '_blank')}
+            onClick={() => window.open("https://github.com/Seristic", "_blank")}
             className="btn-primary hover:scale-105 transform transition-all duration-200"
           >
             View More Projects

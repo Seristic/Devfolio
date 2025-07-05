@@ -30,17 +30,20 @@ Visit the live website: [https://Seristic.github.io](https://Seristic.github.io)
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/Seristic/Seristic.github.io.git
 cd Seristic.github.io
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm start
 ```
@@ -78,6 +81,7 @@ cp .env.example .env
 ```
 
 Edit `.env`:
+
 ```bash
 REACT_APP_GITHUB_TOKEN=your_github_token_here
 ```
@@ -130,12 +134,14 @@ The project is configured for GitHub Pages deployment. The build files are autom
 ### Styling
 
 The project uses Tailwind CSS. Customize colors and styles in:
+
 - `tailwind.config.js` - Tailwind configuration
 - `src/index.css` - Global styles
 
 ### Components
 
 All components are in `src/components/`:
+
 - `Hero.js` - Landing section
 - `About.js` - About me section
 - `Skills.js` - Skills showcase
