@@ -20,14 +20,61 @@ const Projects = () => {
           CONFIG.github.username,
           CONFIG.github.token
         );
-        
+
         const repos = await githubService.getRepositories(50, CONFIG.github.includePrivateRepos);
-        
+
+        // Get starred repositories
+        const starredRepos = await githubService.getStarredRepositories().catch(() => []);
+        const starredRepoIds = new Set(starredRepos.map(r => r.id));
+
+        // Define projects to exclude (old/dated projects)
+        const excludedProjects = [
+          '1.7-Banned-Items',
+          '1-7-Banned-Items',
+          'test', // Add any other repo names you want to exclude
+        ];
+
+        // Calculate 6 months ago
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
         // Filter and transform repositories into projects
         const filteredProjects = repos
-          .filter(repo => !repo.fork && repo.description) // Only non-forked repos with descriptions
-          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at)) // Sort by last updated
-          .slice(0, 12) // Limit to 12 most recent projects
+          .filter(repo => {
+            // Exclude forked repos
+            if (repo.fork) return false;
+
+            // Exclude repos without descriptions
+            if (!repo.description) return false;
+
+            // Exclude manually specified old projects
+            const repoName = repo.name.toLowerCase().replace(/[-_]/g, '');
+            if (excludedProjects.some(excluded => repoName.includes(excluded.toLowerCase().replace(/[-_]/g, '')))) {
+              return false;
+            }
+
+            // Include if: starred, has significant stars (3+), or updated in last 6 months
+            const isStarred = starredRepoIds.has(repo.id);
+            const hasStars = repo.stargazers_count >= 3;
+            const isRecent = new Date(repo.updated_at) > sixMonthsAgo;
+
+            return isStarred || hasStars || isRecent;
+          })
+          .sort((a, b) => {
+            // Prioritize starred repos
+            const aStarred = starredRepoIds.has(a.id);
+            const bStarred = starredRepoIds.has(b.id);
+            if (aStarred !== bStarred) return bStarred ? 1 : -1;
+
+            // Then sort by stars
+            if (a.stargazers_count !== b.stargazers_count) {
+              return b.stargazers_count - a.stargazers_count;
+            }
+
+            // Finally by last updated
+            return new Date(b.updated_at) - new Date(a.updated_at);
+          })
+          .slice(0, 12) // Limit to 12 best projects
           .map(repo => ({
             id: repo.id,
             title: repo.name.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
@@ -59,27 +106,27 @@ const Projects = () => {
     const language = repo.language?.toLowerCase() || '';
     const name = repo.name.toLowerCase();
     const description = (repo.description || '').toLowerCase();
-    
+
     // Frontend languages/frameworks
     if (['javascript', 'typescript', 'html', 'css', 'vue', 'svelte'].includes(language) ||
-        name.includes('react') || name.includes('vue') || name.includes('angular') ||
-        description.includes('frontend') || description.includes('ui') || description.includes('website')) {
+      name.includes('react') || name.includes('vue') || name.includes('angular') ||
+      description.includes('frontend') || description.includes('ui') || description.includes('website')) {
       return 'frontend';
     }
-    
+
     // Backend languages/frameworks
     if (['python', 'java', 'go', 'rust', 'php', 'ruby', 'c#', 'c++'].includes(language) ||
-        name.includes('api') || name.includes('server') || name.includes('backend') ||
-        description.includes('backend') || description.includes('api') || description.includes('server')) {
+      name.includes('api') || name.includes('server') || name.includes('backend') ||
+      description.includes('backend') || description.includes('api') || description.includes('server')) {
       return 'backend';
     }
-    
+
     // Full-stack indicators
-    if (name.includes('fullstack') || description.includes('fullstack') || 
-        description.includes('full stack') || description.includes('full-stack')) {
+    if (name.includes('fullstack') || description.includes('fullstack') ||
+      description.includes('full stack') || description.includes('full-stack')) {
       return 'fullstack';
     }
-    
+
     // Default categorization
     return 'frontend';
   };
@@ -109,7 +156,7 @@ const Projects = () => {
               </span>
             </div>
           )}
-          
+
           {/* GitHub Stats */}
           <div className="absolute top-4 right-4 flex space-x-2">
             {project.stars > 0 && (
@@ -232,11 +279,10 @@ const Projects = () => {
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
-                  className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${
-                    activeFilter === filter.id
+                  className={`px-6 py-2 rounded-full font-medium transition-all duration-200 ${activeFilter === filter.id
                       ? "bg-primary-600 text-white shadow-lg"
                       : "bg-white text-gray-600 hover:bg-gray-100"
-                  }`}
+                    }`}
                 >
                   {filter.label}
                 </button>

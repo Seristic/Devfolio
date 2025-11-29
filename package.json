@@ -1,14 +1,22 @@
 {
-  "name": "devfolio",
+  "name": "seristic-portfolio",
   "version": "1.1.0",
   "private": true,
   "dependencies": {
+    "@iconify/react": "^6.0.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "data-fns": "^1.1.0",
+    "gray-matter": "^4.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.6.3",
+    "react-scripts": "^5.0.1",
+    "rehype-highlight": "^7.0.2",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -17,9 +25,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build -b main"
+    "deploy": "gh-pages -d build"
   },
-  "homepage": "https://Seristic.github.io",
+  "homepage": "https://seristic.com",
   "eslintConfig": {
     "extends": [
       "react-app",

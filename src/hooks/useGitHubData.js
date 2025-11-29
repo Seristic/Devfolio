@@ -51,7 +51,7 @@ export const useGitHubData = (username, options = {}) => {
 
         // Fetch language stats and profile stats in parallel
         const [languageStats, profileStats] = await Promise.all([
-          useDetailedStats 
+          useDetailedStats
             ? github.getAllLanguageStats(includePrivate)
             : github.getBasicLanguageStats(includePrivate),
           github.getProfileStats(includePrivate),

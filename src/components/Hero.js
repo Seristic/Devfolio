@@ -47,7 +47,7 @@ const Hero = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up animation-delay-600">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-slide-up animation-delay-600">
             <button
               onClick={() => scrollToSection("projects")}
               className="btn-primary hover:scale-105 transform transition-all duration-200"
@@ -63,7 +63,7 @@ const Hero = () => {
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 animate-bounce">
             <button
               onClick={() => scrollToSection("about")}
               className="text-white/70 hover:text-white transition-colors duration-200"
