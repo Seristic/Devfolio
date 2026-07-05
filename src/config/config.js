@@ -22,7 +22,7 @@ export const CONFIG = {
     social: {
       github: "https://github.com/Seristic",
       linkedin: "https://linkedin.com/in/alyssa-blackley/",
-      twitter: "https://x.com/MistySereen",
+      twitter: "https://x.com/SeriKitsu",
     },
   },
 

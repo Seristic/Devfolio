@@ -1,45 +1,269 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --rose: #c4708a;
+  --rose-light: #e8b4c8;
+  --rose-pale: #f7eef3;
+  --plum: #9b7ba6;
+  --ink: #1a1118;
+  --mist: #6b5a63;
+  --champagne: #f0e6ed;
+  --page: #fdfbfc;
+
+  /* Seasonal */
+  --trans-blue: #55cdfc;
+  --trans-pink: #f7a8b8;
+  --trans-white: #ffffff;
+  --hw-orange: #ff6b35;
+  --hw-purple: #c084fc;
+  --hw-dark: #1a0a2e;
+  --hw-yellow: #f5e642;
+  --xmas-red: #c41e3a;
+  --xmas-green: #165b33;
+  --xmas-gold: #ffd700;
+  --xmas-warm: #f8f4e3;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
+    background-color: var(--page);
   }
-
   body {
-    font-family: "Inter", sans-serif;
+    font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+    color: var(--ink);
+    background-color: var(--page);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: "Cormorant Garamond", Georgia, serif;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200;
+  .section-label {
+    @apply flex items-center gap-3 mb-10;
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--rose);
   }
-
-  .btn-secondary {
-    @apply bg-transparent hover:bg-gray-100 text-gray-900 font-medium py-3 px-6 rounded-lg border border-gray-300 transition-colors duration-200;
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--champagne);
+    opacity: 1;
+    transition: background 0.4s;
+  }
+  .section-label.pride::after {
+    background: linear-gradient(
+      90deg,
+      #55cdfc 0%,
+      #f7a8b8 35%,
+      #fff 50%,
+      #f7a8b8 65%,
+      #55cdfc 100%
+    );
+    opacity: 0.55;
+  }
+  .section-label.halloween::after {
+    background: linear-gradient(90deg, #ff6b35 0%, #c084fc 50%, #ff6b35 100%);
+    opacity: 0.5;
+  }
+  .section-label.halloween {
+    color: var(--hw-orange);
+  }
+  .section-label.christmas::after {
+    background: linear-gradient(90deg, #c41e3a 0%, #ffd700 50%, #165b33 100%);
+    opacity: 0.55;
+  }
+  .section-label.christmas {
+    color: var(--xmas-red);
   }
 
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-20 md:py-28;
   }
-
   .container-custom {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-6xl mx-auto px-6 sm:px-8 lg:px-12;
   }
 
-  .text-gradient {
-    @apply bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent;
+  .btn-primary {
+    display: inline-block;
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--page);
+    background: var(--rose);
+    border: 1px solid var(--rose);
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    transition:
+      background 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .btn-ghost {
+    display: inline-block;
+    font-family: "DM Sans", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rose-light);
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    transition:
+      border-color 0.2s,
+      color 0.2s;
+    cursor: pointer;
+  }
+  .btn-ghost:hover {
+    border-color: var(--rose);
+    color: var(--rose);
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300;
+    background: white;
+    border: 1px solid var(--champagne);
+    border-radius: 4px;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .card:hover {
+    border-color: var(--rose-light);
+    box-shadow: 0 4px 24px rgba(196, 112, 138, 0.08);
+  }
+
+  .pill {
+    display: inline-block;
+    font-family: "DM Sans", sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--rose);
+    background: var(--rose-pale);
+    border-radius: 100px;
+    padding: 0.2rem 0.65rem;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  .font-display {
+    font-family: "Cormorant Garamond", serif;
+  }
+  .font-body {
+    font-family: "DM Sans", sans-serif;
+  }
+  .text-mist {
+    color: var(--mist);
+  }
+  .text-rose {
+    color: var(--rose);
+  }
+  .text-plum {
+    color: var(--plum);
+  }
+  .bg-page {
+    background-color: var(--page);
+  }
+  .bg-champagne {
+    background-color: var(--champagne);
+  }
+  .border-blush {
+    border-color: var(--rose-light);
+  }
+}
+
+/* ── Seasonal logo animations ─────────────────────────────── */
+@keyframes transShimmer {
+  0% {
+    color: #55cdfc;
+  }
+  33% {
+    color: #f7a8b8;
+  }
+  66% {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+  }
+  100% {
+    color: #55cdfc;
+  }
+}
+@keyframes hwShimmer {
+  0% {
+    color: #ff6b35;
+  }
+  50% {
+    color: #c084fc;
+  }
+  100% {
+    color: #ff6b35;
+  }
+}
+@keyframes xmasShimmer {
+  0% {
+    color: #c41e3a;
+  }
+  33% {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+  66% {
+    color: #165b33;
+  }
+  100% {
+    color: #c41e3a;
+  }
+}
+
+.seasonal-logo-pride {
+  animation: transShimmer 4s ease-in-out infinite !important;
+}
+.seasonal-logo-halloween {
+  animation: hwShimmer 3s ease-in-out infinite !important;
+}
+.seasonal-logo-christmas {
+  animation: xmasShimmer 4s ease-in-out infinite !important;
+}
+
+/* ── Christmas gradient text ───────────────────────────────── */
+.xmas-gradient-text {
+  background: linear-gradient(90deg, #c41e3a, #ffd700, #165b33);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Bounce for scroll indicator ───────────────────────────── */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  50% {
+    transform: translateY(6px) translateX(-50%);
   }
 }

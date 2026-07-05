@@ -1,240 +1,187 @@
 import React, { useState } from "react";
+import useSeasonalTheme from "../hooks/useSeasonalTheme";
+import { TransFlag } from "./SeasonalAccent";
+import { ObfuscatedEmail, getMailto } from "../utils/email";
+
+const SOCIAL = [
+  { name: "GitHub", url: "https://github.com/Seristic" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/alyssa-blackley/" },
+  { name: "X", url: "https://x.com/MistySereen" },
+];
+
+const PRIMARY = { pride: "var(--trans-blue)", halloween: "var(--hw-orange)", christmas: "var(--xmas-red)", default: "var(--rose)" };
+const SECONDARY = { pride: "var(--trans-pink)", halloween: "var(--hw-purple)", christmas: "var(--xmas-gold)", default: "var(--rose)" };
+const BTN_STYLE = {
+  pride: { background: "var(--trans-pink)", borderColor: "var(--trans-pink)", color: "var(--ink)" },
+  halloween: { background: "var(--hw-orange)", borderColor: "var(--hw-orange)", color: "var(--hw-dark)" },
+  christmas: { background: "var(--xmas-red)", borderColor: "var(--xmas-red)", color: "var(--xmas-warm)" },
+};
+
+const CARD_STRIPES = {
+  pride: ["#55CDFC", "#F7A8B8", "#FFFFFF", "#F7A8B8", "#55CDFC"],
+  halloween: ["#FF6B35", "#C084FC", "#FF6B35", "#C084FC", "#FF6B35"],
+  christmas: ["#C41E3A", "#FFD700", "#165B33", "#FFD700", "#C41E3A"],
+};
+
+const SEASONAL_NOTE = {
+  pride: { icon: <TransFlag stripeWidth={28} stripeHeight={3} gap={2} opacity={0.55} />, text: "Happy Pride 🏳️‍⚧️", color: "var(--trans-pink)" },
+  halloween: { icon: null, text: "👻 Don't be a stranger...", color: "var(--hw-purple)" },
+  christmas: { icon: null, text: "🎄 Season's greetings!", color: "var(--xmas-gold)" },
+};
+
+const labelStyle = {
+  display: "block", fontFamily: "'DM Sans', sans-serif",
+  fontSize: "10px", fontWeight: 500, letterSpacing: "0.15em",
+  textTransform: "uppercase", color: "var(--mist)", marginBottom: "0.4rem",
+};
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+  const { theme, isSeasonal } = useSeasonalTheme();
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [sent, setSent] = useState(false);
+  const [focused, setFoc] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
-    alert("Message sent successfully!");
+    console.log("Contact form submitted:", form);
+    setSent(true);
+    setForm({ name: "", email: "", subject: "", message: "" });
+    setTimeout(() => setSent(false), 5000);
   };
 
-  const contactInfo = [
-    {
-      icon: (
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
-        </svg>
-      ),
-      title: "Email",
-      content: "contact@seristic.com",
-      link: "mailto:contact@seristic.com",
-    },
-  ];
+  const primary = PRIMARY[theme] || PRIMARY.default;
+  const secondary = SECONDARY[theme] || SECONDARY.default;
+  const btnStyle = isSeasonal ? BTN_STYLE[theme] : null;
+  const note = isSeasonal ? SEASONAL_NOTE[theme] : null;
+  const stripes = isSeasonal ? CARD_STRIPES[theme] : null;
 
-  const socialLinks = [
-    {
-      name: "GitHub",
-      url: "https://github.com/Seristic",
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-        </svg>
-      ),
-    },
-    {
-      name: "LinkedIn",
-      url: "https://www.linkedin.com/in/alyssa-blackley/",
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-        </svg>
-      ),
-    },
-    {
-      name: "Twitter",
-      url: "https://x.com/MistySereen",
-      icon: (
-        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-        </svg>
-      ),
-    },
-  ];
+  const inputStyle = (field) => ({
+    width: "100%", fontFamily: "'DM Sans'", fontSize: "13px", fontWeight: 300,
+    color: "var(--ink)", background: "white", border: "1px solid",
+    borderColor: focused === field ? primary : "var(--champagne)",
+    borderRadius: "2px", padding: "0.75rem 1rem", outline: "none",
+    transition: "border-color 0.2s", boxSizing: "border-box",
+  });
 
   return (
-    <section id="contact" className="section-padding bg-white">
+    <section id="contact" style={{ background: "white" }} className="section-padding">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Get In <span className="text-gradient">Touch</span>
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            I'm always open to discussing new opportunities, interesting
-            projects, or just having a chat about technology and development.
-          </p>
-        </div>
+        <div className={`section-label${isSeasonal ? ` ${theme}` : ""}`}>Contact</div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.4fr", gap: "5rem", alignItems: "start" }} className="contact-grid">
+
+          {/* Left */}
           <div>
-            <h3 className="text-2xl font-semibold text-gray-900 mb-8">
-              Let's Connect
-            </h3>
+            <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300, fontSize: "clamp(2rem, 4vw, 3.25rem)", lineHeight: 1.1, color: "var(--ink)", marginBottom: "1.5rem" }}>
+              Let's <em style={{ color: primary, fontStyle: "italic" }}>connect</em>
+            </h2>
+            <p style={{ fontFamily: "'DM Sans'", fontSize: "13px", fontWeight: 300, lineHeight: 1.8, color: "var(--mist)", marginBottom: "2.5rem" }}>
+              I'm always open to discussing new projects, interesting opportunities, or just having a chat about technology.
+            </p>
 
-            <div className="space-y-6 mb-8">
-              {contactInfo.map((info, index) => (
-                <a
-                  key={index}
-                  href={info.link}
-                  className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
-                >
-                  <div className="flex-shrink-0 w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600 group-hover:bg-primary-200 transition-colors duration-200">
-                    {info.icon}
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-gray-500">
-                      {info.title}
-                    </div>
-                    <div className="text-lg text-gray-900">{info.content}</div>
-                  </div>
-                </a>
-              ))}
+            {/* Email — obfuscated, never a raw string in the DOM */}
+            <div
+              style={{
+                display: "flex", alignItems: "center", gap: "0.75rem",
+                marginBottom: "2.5rem", padding: "1rem",
+                border: "1px solid var(--champagne)", borderRadius: "4px",
+                background: "var(--rose-pale)", transition: "border-color 0.2s",
+                cursor: "pointer",
+              }}
+              onClick={() => { window.location.href = getMailto(); }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = secondary)}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--champagne)")}
+            >
+              <div style={{ width: "36px", height: "36px", background: "white", borderRadius: "2px", display: "flex", alignItems: "center", justifyContent: "center", color: primary, flexShrink: 0 }}>
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <div style={{ fontFamily: "'DM Sans'", fontSize: "9px", fontWeight: 500, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--mist)" }}>Email</div>
+                {/* ObfuscatedEmail renders the address via JS only — never in static HTML */}
+                <ObfuscatedEmail style={{ fontFamily: "'DM Sans'", fontSize: "13px", color: "var(--ink)", textDecoration: "none" }} />
+              </div>
             </div>
 
-            {/* Social Links */}
+            {/* Social */}
             <div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                Follow Me
-              </h4>
-              <div className="flex space-x-4">
-                {socialLinks.map((social, index) => (
-                  <a
-                    key={index}
-                    href={social.url}
-                    className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 hover:bg-primary-600 hover:text-white transition-all duration-200 transform hover:scale-110"
-                    title={social.name}
+              <p style={{ fontFamily: "'DM Sans'", fontSize: "9px", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--mist)", marginBottom: "0.75rem" }}>Find me on</p>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                {SOCIAL.map((s) => (
+                  <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" title={s.name}
+                    style={{ fontFamily: "'DM Sans'", fontSize: "10px", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0.4rem 0.75rem", border: "1px solid var(--champagne)", borderRadius: "2px", color: "var(--mist)", textDecoration: "none", transition: "border-color 0.2s, color 0.2s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = primary; e.currentTarget.style.color = primary; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--champagne)"; e.currentTarget.style.color = "var(--mist)"; }}
                   >
-                    {social.icon}
+                    {s.name}
                   </a>
                 ))}
               </div>
             </div>
+
+            {/* Seasonal note */}
+            {note && (
+              <div style={{ marginTop: "2.5rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                {note.icon}
+                <span style={{ fontFamily: "'DM Sans'", fontSize: "10px", fontWeight: 400, letterSpacing: "0.1em", color: note.color, opacity: 0.85 }}>
+                  {note.text}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Contact Form */}
-          <div className="card p-8">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-              Send Me a Message
-            </h3>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter your name"
-                />
+          {/* Right — form */}
+          <div className="card" style={{ padding: "2rem" }}>
+            {isSeasonal && (
+              <div style={{ display: "flex", height: "3px", marginBottom: "1.5rem", borderRadius: "2px", overflow: "hidden" }}>
+                {stripes.map((c, i) => <div key={i} style={{ flex: 1, background: c, opacity: 0.65 }} />)}
               </div>
+            )}
 
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                  placeholder="Enter your email"
-                />
+            {sent ? (
+              <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
+                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", fontWeight: 300, color: primary, fontStyle: "italic", marginBottom: "0.5rem" }}>
+                  Message sent.
+                </p>
+                <p style={{ fontFamily: "'DM Sans'", fontSize: "13px", color: "var(--mist)" }}>I'll get back to you soon.</p>
               </div>
-
-              <div>
-                <label
-                  htmlFor="subject"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-                  placeholder="What's this about?"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="message"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none"
-                  placeholder="Tell me about your project or just say hello!"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full btn-primary hover:scale-105 transform transition-all duration-200"
-              >
-                Send Message
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <div>
+                    <label htmlFor="name" style={labelStyle}>Name</label>
+                    <input id="name" name="name" type="text" required value={form.name} onChange={handleChange} placeholder="Your name"
+                      style={inputStyle("name")} onFocus={() => setFoc("name")} onBlur={() => setFoc(null)} />
+                  </div>
+                  <div>
+                    <label htmlFor="email" style={labelStyle}>Email</label>
+                    <input id="email" name="email" type="email" required value={form.email} onChange={handleChange} placeholder="your@email.com"
+                      style={inputStyle("email")} onFocus={() => setFoc("email")} onBlur={() => setFoc(null)} />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="subject" style={labelStyle}>Subject</label>
+                  <input id="subject" name="subject" type="text" required value={form.subject} onChange={handleChange} placeholder="What's this about?"
+                    style={inputStyle("subject")} onFocus={() => setFoc("subject")} onBlur={() => setFoc(null)} />
+                </div>
+                <div>
+                  <label htmlFor="message" style={labelStyle}>Message</label>
+                  <textarea id="message" name="message" required rows={6} value={form.message} onChange={handleChange}
+                    placeholder="Tell me about your project or just say hello."
+                    style={{ ...inputStyle("message"), resize: "none" }}
+                    onFocus={() => setFoc("message")} onBlur={() => setFoc(null)} />
+                </div>
+                <button type="submit" className="btn-primary" style={{ alignSelf: "flex-start", ...(btnStyle || {}) }}>
+                  Send message
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
+      <style>{`@media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr !important; gap: 3rem !important; } }`}</style>
     </section>
   );
 };
